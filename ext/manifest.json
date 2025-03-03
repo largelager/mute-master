@@ -2,8 +2,8 @@
   "name": "Meet Mute",
   "short_name": "MeetMute",
   "author": "Matt Simonis",
-  "version": "0.0.5",
-  "manifest_version": 2,
+  "version": "1.0.1",
+  "manifest_version": 3,
   "description": "Easy muting/unmuting for when you're in a Google Meet.",
   "icons": {
     "32": "icons/icon32.png",
@@ -12,10 +12,8 @@
   },
   "default_locale": "en",
   "background": {
-    "scripts": [
-      "js/background.js"
-    ],
-    "persistent": false
+    "service_worker": "js/background.js",
+    "type": "module"
   },
   "content_scripts": [
     {
@@ -27,13 +25,23 @@
       ]
     }
   ],
-  "browser_action": {
+  "action": {
     "default_icon": "icons/icon32.png",
     "default_title": "Disconnected"
   },
   "permissions": [
+    "tabs",
+    "storage"
+  ],
+  "host_permissions": [
     "https://meet.google.com/*"
   ],
+  "web_accessible_resources": [{
+    "resources": [
+      "icons/*.png"
+    ],
+    "matches": ["<all_urls>"]
+  }],
   "commands": {
     "toggle_mute": {
       "description": "Toggle Mute",

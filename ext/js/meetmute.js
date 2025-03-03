@@ -35,7 +35,8 @@ function waitForMuteButton() {
       watchIsMuted(el)
     })
     .catch((error) => {
-      chrome.extension.sendMessage({ message: 'disconnected' })
+      // Change from chrome.extension to chrome.runtime
+      chrome.runtime.sendMessage({ message: 'disconnected' })
     })
 }
 
@@ -48,8 +49,23 @@ function isMuted() {
 }
 
 function updateMuted(newValue) {
-  muted = newValue || isMuted()
-  chrome.extension.sendMessage({ message: muted ? 'muted' : 'unmuted' })
+  if (!isExtensionContextValid()) {
+    console.log('Extension context invalidated, reloading page...');
+    window.location.reload();
+    return;
+  }
+
+  try {
+    muted = newValue || isMuted()
+    chrome.runtime.sendMessage({ message: muted ? 'muted' : 'unmuted' })
+  } catch (error) {
+    if (error.message.includes('Extension context invalidated')) {
+      console.log('Extension context invalidated, reloading page...');
+      window.location.reload();
+    } else {
+      console.error('Error in updateMuted:', error);
+    }
+  }
 }
 
 var isMutedObserver
@@ -88,29 +104,63 @@ function watchBodyClass() {
 watchBodyClass()
 
 window.onbeforeunload = (event) => {
-  chrome.extension.sendMessage({ message: 'disconnected' })
+  if (isExtensionContextValid()) {
+    try {
+      chrome.runtime.sendMessage({ message: 'disconnected' })
+    } catch (error) {
+      console.log('Error sending disconnect message:', error);
+    }
+  }
 }
 
+// Add this function to check if the extension context is still valid
+function isExtensionContextValid() {
+  try {
+    // Try to access chrome.runtime
+    return !!chrome.runtime.getURL('');
+  } catch (e) {
+    return false;
+  }
+}
+
+// Modify the message listener to check for valid context
 chrome.runtime.onMessage.addListener(
   (request, sender, sendResponse) => {
-    muted = isMuted()
-    if (request && request.command && request.command === 'toggle_mute') {
-      muted = !muted
-      sendKeyboardCommand()
-    } else if (request && request.command && request.command === 'mute') {
-      if (!muted) {
-        muted = !muted
-        sendKeyboardCommand()
-      }
-    } else if (request && request.command && request.command === 'unmute') {
-      if (muted) {
-        muted = !muted
-        sendKeyboardCommand()
-      }
+    // Check if extension context is still valid
+    if (!isExtensionContextValid()) {
+      console.log('Extension context invalidated, reloading page...');
+      window.location.reload();
+      return;
     }
 
-    sendResponse({ message: muted ? 'muted' : 'unmuted' });
-  })
+    try {
+      muted = isMuted()
+      if (request && request.command && request.command === 'toggle_mute') {
+        muted = !muted
+        sendKeyboardCommand()
+      } else if (request && request.command && request.command === 'mute') {
+        if (!muted) {
+          muted = !muted
+          sendKeyboardCommand()
+        }
+      } else if (request && request.command && request.command === 'unmute') {
+        if (muted) {
+          muted = !muted
+          sendKeyboardCommand()
+        }
+      }
+
+      sendResponse({ message: muted ? 'muted' : 'unmuted' });
+    } catch (error) {
+      if (error.message.includes('Extension context invalidated')) {
+        console.log('Extension context invalidated, reloading page...');
+        window.location.reload();
+      } else {
+        console.error('Error in message listener:', error);
+      }
+    }
+  }
+)
 
 const keydownEvent = new KeyboardEvent('keydown', {
   "key": "d",
@@ -124,3 +174,24 @@ const keydownEvent = new KeyboardEvent('keydown', {
 function sendKeyboardCommand() {
   document.dispatchEvent(keydownEvent)
 }
+
+// function setIcon(status) {
+//   let iconType = ''
+//   if (status === 'muted' || status === 'unmuted') {
+//     iconType = '_' + status
+//   }
+//   let title = status?.charAt(0).toUpperCase() + status?.substr(1)
+  
+//   // Use chrome.runtime.getURL to get the full path to the icons
+//   chrome.action.setIcon({
+//     path: {
+//       "32": chrome.runtime.getURL(`icons/icon32${iconType}.png`),
+//       "48": chrome.runtime.getURL(`icons/icon48${iconType}.png`),
+//       "128": chrome.runtime.getURL(`icons/icon128${iconType}.png`)
+//     }
+//   })
+  
+//   chrome.action.setTitle({
+//     title: title || 'Disconnected'
+//   })
+// }
