@@ -1,4 +1,70 @@
 {
+  "name": "Mute Master",
+  "short_name": "MuteMaster",
+  "author": "Jason Donaghy",
+  "version": "1.0.2",
+  "manifest_version": 3,
+  "description": "Easy muting/unmuting for when you're in a Google Meet.",
+  "icons": {
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "default_locale": "en",
+  "background": {
+    "service_worker": "js/background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://meet.google.com/*"
+      ],
+      "js": [
+        "js/meetmute.js"
+      ]
+    }
+  ],
+  "action": {
+    "default_icon": "icons/icon32.png",
+    "default_title": "Disconnected"
+  },
+  "permissions": [
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://meet.google.com/*"
+  ],
+  "web_accessible_resources": [{
+    "resources": [
+      "icons/*.png"
+    ],
+    "matches": ["<all_urls>"]
+  }],
+  "commands": {
+    "toggle_mute": {
+      "description": "Toggle Mute",
+      "suggested_key": {
+        "default": "Ctrl+Shift+K"
+      },
+      "global": true
+    },
+    "mute": {
+      "description": "Mute",
+      "suggested_key": {
+        "default": "Ctrl+Shift+M"
+      },
+      "global": true
+    },
+    "unmute": {
+      "description": "Unmute",
+      "suggested_key": {
+        "default": "Ctrl+Shift+B"
+      },
+      "global": true
+    }
+  }
+=======
 	"name": "Mute Master",
 	"short_name": "MuteMaster",
 	"author": "Jason Donaghy",
