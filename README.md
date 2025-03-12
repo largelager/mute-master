@@ -11,10 +11,15 @@
 
 ## Installation
 
-[<img src="install.png" width="175px">][webstore-url]
+[<img src="install.png" width="200px">][webstore-url]
 
 
 [webstore-url]: https://chromewebstore.google.com/detail/dkmkjapkeijdmpdecojjgdadekfimdan?utm_source=item-share-cb
+
+[<img width="175" alt="bmc-full-logo-no-background" src="https://github.com/user-attachments/assets/6c237baa-368c-4624-9e74-945e2662d586">][coffee-url]
+
+[coffee-url]: https://buymeacoffee.com/mrdonaghy
+
 
 # License
 
