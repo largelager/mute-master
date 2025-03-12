@@ -7,11 +7,11 @@
   Originally by Matt Simonis but recreated to be compatible with Manifest V3.</h3>
 
 ## Installation
-Coming soon
-<!-- [<img src="install.png" width="175px">][webstore-url]
 
-[webstore-url]: https://chrome.google.com/webstore/detail/meet-mute/dkgoclojlihiolngeagmhkjiglmoeeic
--->
+[<img src="install.png" width="175px">][webstore-url]
+
+[webstore-url]: https://chromewebstore.google.com/detail/dkmkjapkeijdmpdecojjgdadekfimdan?utm_source=item-share-cb
+
 # License
 
 COPYRIGHT (C) 2025 JASON DOANGHY. LICENSED UNDER THE MIT LICENSE.
